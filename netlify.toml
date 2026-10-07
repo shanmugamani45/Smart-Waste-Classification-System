@@ -1,0 +1,16 @@
+# Netlify Configuration for AI Circular Waste Classification System
+[build]
+  # The frontend files (index.html, style.css, script.js) are located in the frontend/ folder
+  publish = "frontend"
+
+# Backwards compatibility: Map any requests to /static/* directly to the root files
+[[redirects]]
+  from = "/static/*"
+  to = "/:splat"
+  status = 200
+
+# Single Page App routing fallback: send unknown page requests to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Top Navigation -->
@@ -26,9 +26,10 @@
                 <a href="#history" class="nav-link">Audit History</a>
                 <a href="#model-info" class="nav-link">Model Specs</a>
             </nav>
-            <div class="system-status">
+            <div class="system-status" id="system-status-btn" title="Click to configure backend connection" role="button" tabindex="0">
                 <span class="status-dot" id="status-indicator"></span>
                 <span id="status-text">Connecting...</span>
+                <span class="status-gear" style="font-size:0.85rem; margin-left:4px; opacity:0.8;">⚙️</span>
             </div>
         </div>
     </header>
@@ -371,6 +372,31 @@
         </div>
     </footer>
 
-    <script src="/static/script.js"></script>
+    <!-- Backend Connection Settings Modal -->
+    <div class="modal-overlay" id="backend-modal" style="display: none;">
+        <div class="modal-box glass-card">
+            <div class="modal-header">
+                <h3>⚡ Backend API Connection</h3>
+                <button type="button" class="modal-close" id="modal-close-btn">✕</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">
+                    Configure your FastAPI backend URL. When deployed statically on Netlify, the application can connect to your remote API (e.g. Render, Railway, Hugging Face, or ngrok tunnel) or run in standalone <strong>Interactive Demo Mode</strong>.
+                </p>
+                <div class="form-group" style="margin: 1.25rem 0;">
+                    <label for="backend-url-input" style="display:block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.4rem;">Backend API URL:</label>
+                    <input type="text" id="backend-url-input" placeholder="e.g. https://your-fastapi-app.onrender.com" class="modal-input" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--card-border); background: rgba(15, 23, 42, 0.8); color: var(--text-primary); font-family: var(--font-mono); font-size: 0.85rem;">
+                </div>
+                <div class="modal-actions" style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                    <button type="button" class="btn btn-outline btn-sm" id="btn-use-localhost">Localhost:8000</button>
+                    <button type="button" class="btn btn-outline btn-sm" id="btn-use-demo">Interactive Demo</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-save-backend">Connect Live API</button>
+                </div>
+                <div id="backend-modal-status" class="modal-status-text" style="font-size: 0.85rem; color: var(--text-muted);"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

@@ -69,6 +69,22 @@ async def serve_index():
     return JSONResponse({"message": "AI Circular Economy System API is live. Visit /docs for OpenAPI specs."})
 
 
+@app.get("/style.css", include_in_schema=False)
+async def serve_css():
+    css_path = FRONTEND_DIR / "style.css"
+    if css_path.exists():
+        return FileResponse(str(css_path), media_type="text/css")
+    raise HTTPException(status_code=404, detail="CSS not found")
+
+
+@app.get("/script.js", include_in_schema=False)
+async def serve_js():
+    js_path = FRONTEND_DIR / "script.js"
+    if js_path.exists():
+        return FileResponse(str(js_path), media_type="application/javascript")
+    raise HTTPException(status_code=404, detail="JS not found")
+
+
 @app.get("/health", response_model=HealthResponse)
 async def health_check():
     """Service health and model readiness probe."""
