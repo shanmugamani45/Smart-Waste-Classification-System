@@ -1,0 +1,96 @@
+# AI-Powered Circular Economy System Configuration
+
+model:
+  name: "MobileNetV3"          # Options: MobileNetV3, EfficientNet-B0, ResNet50
+  image_size: 224
+  num_classes: 7
+  dropout_rate: 0.3
+  pretrained: true
+
+classes:
+  - "e_waste"
+  - "glass"
+  - "metal"
+  - "organic"
+  - "paper"
+  - "plastic"
+  - "textile"
+
+training:
+  batch_size: 4                # Optimal batch size for small real-image dataset
+  num_workers: 0               # Safe default for Windows multiprocessing
+  epochs_stage1: 25            # Head training with frozen backbone
+  epochs_stage2: 25            # Fine-tuning unfrozen top layers
+  learning_rate: 0.001         # Initial LR for head
+  fine_tune_learning_rate: 0.0001  # Fine-tuning LR for unfreezed features
+  weight_decay: 0.005
+  early_stopping_patience: 10
+  lr_reduce_patience: 3
+  seed: 42
+
+inference:
+  confidence_high_threshold: 0.80   # Reliable prediction
+  confidence_moderate_threshold: 0.50 # Moderate confidence
+  # Below 0.50 triggers "Low confidence - manual verification recommended"
+  device: "auto"                    # "auto", "cuda", or "cpu"
+
+circular_rules:
+  plastic:
+    recommended_action: "Recycle"
+    circular_strategy: "Reuse → Recycle"
+    environmental_priority: "HIGH"
+    guidelines: "Rinse container thoroughly; separate plastic bottle caps; avoid mixing mixed-polymer plastics."
+  paper:
+    recommended_action: "Recycle"
+    circular_strategy: "Reuse → Recycle"
+    environmental_priority: "MEDIUM"
+    guidelines: "Keep dry and unsoiled; remove excessive adhesive tapes; food-greased paper must be composted, not recycled."
+  glass:
+    recommended_action: "Reuse"
+    circular_strategy: "Reuse → Recycle"
+    environmental_priority: "MEDIUM"
+    guidelines: "Wash clean; infinite recyclability without quality loss; do not mix heat-resistant cookware glass with container glass."
+  metal:
+    recommended_action: "Recycle"
+    circular_strategy: "Recycle"
+    environmental_priority: "HIGH"
+    guidelines: "Crush aluminum cans to save transport volume; highly energy-efficient remelting saves 95% primary extraction energy."
+  organic:
+    recommended_action: "Compost"
+    circular_strategy: "Compost / Anaerobic Digestion"
+    environmental_priority: "MEDIUM"
+    guidelines: "Divert from landfills to prevent methane gas emissions; suitable for aerobic home composting or municipal organic treatment."
+  textile:
+    recommended_action: "Repair / Donate"
+    circular_strategy: "Reuse → Repair → Recycle"
+    environmental_priority: "HIGH"
+    guidelines: "If wearable, clean and donate; if damaged, mend or repurpose as cleaning rags; otherwise send to specialized textile recycling."
+  e_waste:
+    recommended_action: "Specialized E-Waste Processing"
+    circular_strategy: "Repair → Refurbish → Authorized Recycling"
+    environmental_priority: "HIGH"
+    guidelines: "Hazardous heavy metals and precious materials present; never dispose in municipal garbage; drop off at authorized e-waste e-stewards."
+
+paths:
+  dataset_root: "./dataset"
+  train_dir: "./dataset/train"
+  val_dir: "./dataset/validation"
+  test_dir: "./dataset/test"
+  model_dir: "./models"
+  best_model_path: "./models/best_model.pt"
+  comparison_csv: "./models/model_comparison.csv"
+  database: "./database/app.db"
+  evaluation_dir: "./evaluation"
+  uploads_dir: "./uploads"
+
+api:
+  host: "127.0.0.1"
+  port: 8000
+  title: "AI Circular Economy & Smart Waste Classification API"
+  version: "1.0.0"
+  max_upload_size_bytes: 10485760 # 10MB
+  allowed_extensions:
+    - ".jpg"
+    - ".jpeg"
+    - ".png"
+    - ".webp"

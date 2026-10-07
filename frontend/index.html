@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Circular Economy & Smart Waste Classification System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Top Navigation -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">♻️</span>
+                <div class="logo-text">
+                    <span class="brand-title">CIRCULAR.AI</span>
+                    <span class="brand-sub">Sustainable Consumption Intelligence</span>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="#analyzer" class="nav-link active">Analyzer</a>
+                <a href="#dashboard" class="nav-link">Analytics</a>
+                <a href="#history" class="nav-link">Audit History</a>
+                <a href="#model-info" class="nav-link">Model Specs</a>
+            </nav>
+            <div class="system-status">
+                <span class="status-dot" id="status-indicator"></span>
+                <span id="status-text">Connecting...</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="badge-tag">Academic Research & Production CV System</div>
+            <h1 class="hero-title">AI-Powered Circular Waste Classification</h1>
+            <p class="hero-desc">
+                Transforming linear consumption (<em>Take → Make → Dispose</em>) into a regenerative circular loop 
+                (<em>Reduce → Reuse → Repair → Recycle</em>) using Computer Vision transfer learning and transparent environmental policy engines.
+            </p>
+        </section>
+
+        <!-- Main Analyzer Workspace -->
+        <section id="analyzer" class="analyzer-grid">
+            <!-- Left Card: Input & Upload -->
+            <div class="card glass-card upload-card">
+                <div class="card-header">
+                    <h2>Capture / Upload Waste</h2>
+                    <span class="step-indicator">Step 1</span>
+                </div>
+
+                <div class="drop-zone" id="drop-zone">
+                    <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+                    <div class="drop-zone-content" id="drop-prompt">
+                        <div class="upload-icon-circle">📸</div>
+                        <p class="drop-text">Drag & drop waste image here or <button type="button" class="browse-btn" id="browse-btn">Browse Files</button></p>
+                        <p class="file-hint">Supported formats: JPG, PNG, WEBP (Max 10MB)</p>
+                    </div>
+
+                    <!-- Image Preview Area -->
+                    <div class="preview-container" id="preview-container" style="display: none;">
+                        <img id="image-preview" src="" alt="Selected Waste Sample">
+                        <button type="button" class="remove-btn" id="remove-btn" title="Remove image">✕</button>
+                    </div>
+
+                    <!-- Camera Stream Box -->
+                    <div class="camera-container" id="camera-container" style="display: none;">
+                        <video id="webcam-video" autoplay playsinline></video>
+                        <button type="button" class="btn btn-secondary btn-sm" id="snap-btn">📸 Take Photo</button>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button type="button" class="btn btn-outline" id="webcam-toggle-btn">
+                        <span id="cam-btn-text">📷 Use Camera</span>
+                    </button>
+                    <button type="button" class="btn btn-primary" id="analyze-btn" disabled>
+                        <span>Analyze Material</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
+
+                <div class="disclaimer-box">
+                    <strong>Integrity Note:</strong> Predictions are computed by deep neural models with Grad-CAM explainability. Confidence thresholds gate recommendations to prevent improper recycling contamination.
+                </div>
+            </div>
+
+            <!-- Right Card: AI Inference & Circular Action Output -->
+            <div class="card glass-card results-card" id="results-card">
+                <div class="card-header">
+                    <h2>Circular Economy Decision</h2>
+                    <span class="step-indicator">Step 2</span>
+                </div>
+
+                <!-- Empty State Placeholder -->
+                <div class="empty-state" id="results-empty">
+                    <div class="empty-icon">🌱</div>
+                    <h3>Awaiting Material Ingestion</h3>
+                    <p>Upload or capture an image to identify waste category, verify model attention maps, and retrieve circular directives.</p>
+                </div>
+
+                <!-- Loading State Spinner -->
+                <div class="loading-state" id="results-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Running Computer Vision Backbone & Policy Engine...</p>
+                </div>
+
+                <!-- Populated Results Content -->
+                <div class="results-content" id="results-content" style="display: none;">
+                    <!-- Key Summary Row -->
+                    <div class="summary-banner">
+                        <div class="summary-item">
+                            <span class="summary-label">Detected Material</span>
+                            <span class="summary-value highlight-val" id="res-class">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Model Confidence</span>
+                            <div class="conf-badge-wrap">
+                                <span class="summary-value" id="res-confidence">-</span>
+                                <span class="conf-badge" id="res-conf-tier">HIGH</span>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Inference Latency</span>
+                            <span class="summary-value" id="res-latency">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Confidence Warning Banner if moderate/low -->
+                    <div class="warning-banner" id="res-warning" style="display: none;">
+                        ⚠️ <span id="warning-text"></span>
+                    </div>
+
+                    <!-- Circular Policy Cards -->
+                    <div class="recommendation-grid">
+                        <div class="rec-card action-card">
+                            <div class="rec-header">
+                                <span class="rec-icon">⚡</span>
+                                <span class="rec-title">Recommended Action</span>
+                            </div>
+                            <div class="rec-main-value" id="res-action">-</div>
+                        </div>
+
+                        <div class="rec-card strategy-card">
+                            <div class="rec-header">
+                                <span class="rec-icon">🔄</span>
+                                <span class="rec-title">Circular Hierarchy</span>
+                            </div>
+                            <div class="rec-main-value" id="res-strategy">-</div>
+                        </div>
+
+                        <div class="rec-card priority-card">
+                            <div class="rec-header">
+                                <span class="rec-icon">🌍</span>
+                                <span class="rec-title">Environmental Priority</span>
+                            </div>
+                            <div class="priority-indicator" id="res-priority-badge">
+                                <span id="res-priority">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Guidelines -->
+                    <div class="guidelines-card">
+                        <h4>Handling & Segregation Protocol</h4>
+                        <p id="res-guidelines">-</p>
+                    </div>
+
+                    <!-- Explainability: Grad-CAM Side-by-Side -->
+                    <div class="explainability-section">
+                        <div class="section-title-wrap">
+                            <h4>Explainable AI: Model Attention (Grad-CAM)</h4>
+                            <span class="info-tooltip" title="Visualizes influential convolutional feature regions driving the prediction.">ⓘ</span>
+                        </div>
+                        <div class="heatmap-comparison">
+                            <div class="heatmap-box">
+                                <span class="img-sub">Input Image</span>
+                                <img id="res-orig-img" src="" alt="Input Image">
+                            </div>
+                            <div class="heatmap-box">
+                                <span class="img-sub">Grad-CAM Activation Heatmap</span>
+                                <img id="res-cam-img" src="" alt="Grad-CAM Overlay">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Probabilities Distribution -->
+                    <div class="prob-section">
+                        <h4>Class Probability Distribution</h4>
+                        <div class="prob-bars" id="prob-bars-container">
+                            <!-- Injected dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Human Feedback Loop -->
+                    <div class="feedback-card">
+                        <div class="feedback-prompt">
+                            <span>Is this classification accurate?</span>
+                            <div class="feedback-actions">
+                                <button type="button" class="btn btn-sm btn-outline" id="fb-correct-btn">✓ Correct</button>
+                                <button type="button" class="btn btn-sm btn-outline" id="fb-incorrect-btn">✗ Report Error</button>
+                            </div>
+                        </div>
+                        <div class="feedback-correction" id="feedback-correction-panel" style="display: none;">
+                            <label for="correct-class-select">Select the actual waste category:</label>
+                            <div class="correction-controls">
+                                <select id="correct-class-select" class="form-select">
+                                    <option value="plastic">Plastic</option>
+                                    <option value="paper">Paper</option>
+                                    <option value="glass">Glass</option>
+                                    <option value="metal">Metal</option>
+                                    <option value="organic">Organic</option>
+                                    <option value="textile">Textile</option>
+                                    <option value="e_waste">E-Waste</option>
+                                </select>
+                                <button type="button" class="btn btn-sm btn-primary" id="submit-correction-btn">Submit Correction</button>
+                            </div>
+                        </div>
+                        <div id="feedback-msg" class="feedback-msg" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Analytics Dashboard -->
+        <section id="dashboard" class="dashboard-section">
+            <div class="section-header">
+                <h2>System Analytics & Material Flow</h2>
+                <p>Live metrics computed directly from SQLite persistence records.</p>
+            </div>
+
+            <!-- Metric Counter Cards -->
+            <div class="stats-counter-grid">
+                <div class="counter-card glass-card">
+                    <span class="counter-label">Total Predictions Logged</span>
+                    <span class="counter-num" id="stat-total">0</span>
+                </div>
+                <div class="counter-card glass-card">
+                    <span class="counter-label">System Average Confidence</span>
+                    <span class="counter-num" id="stat-avg-conf">0.0%</span>
+                </div>
+                <div class="counter-card glass-card">
+                    <span class="counter-label">Dominant Material Stream</span>
+                    <span class="counter-num" id="stat-dominant">-</span>
+                </div>
+                <div class="counter-card glass-card">
+                    <span class="counter-label">Dominant Circular Action</span>
+                    <span class="counter-num" id="stat-action-dominant">-</span>
+                </div>
+            </div>
+
+            <!-- Distribution Visualizations -->
+            <div class="distributions-grid">
+                <!-- Waste Category Share -->
+                <div class="card glass-card">
+                    <h3>Waste Material Breakdown (%)</h3>
+                    <div class="distribution-list" id="category-distribution-list">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+
+                <!-- Circular Action Streams -->
+                <div class="card glass-card">
+                    <h3>Circular Action Distribution</h3>
+                    <div class="distribution-list" id="action-distribution-list">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+
+                <!-- Environmental Priority Allocation -->
+                <div class="card glass-card">
+                    <h3>Environmental Priority Distribution</h3>
+                    <div class="priority-bars-wrap" id="priority-distribution-list">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prediction Audit History -->
+        <section id="history" class="history-section">
+            <div class="section-header">
+                <h2>Prediction Audit History</h2>
+                <p>Transparent persistence log of recent classifications and human feedback status.</p>
+            </div>
+
+            <div class="card glass-card history-card">
+                <div class="table-container">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Timestamp</th>
+                                <th>Class</th>
+                                <th>Confidence</th>
+                                <th>Recommended Action</th>
+                                <th>Circular Strategy</th>
+                                <th>Priority</th>
+                                <th>Feedback</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-tbody">
+                            <tr>
+                                <td colspan="8" class="text-center">No predictions recorded yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Model Specifications & Benchmark Comparison -->
+        <section id="model-info" class="specs-section">
+            <div class="section-header">
+                <h2>Model Architecture & Academic Benchmarks</h2>
+                <p>Transfer learning performance metrics and comparative architectural audit.</p>
+            </div>
+
+            <div class="card glass-card">
+                <div class="specs-meta-grid">
+                    <div class="spec-meta-item">
+                        <span class="spec-meta-title">Active Architecture</span>
+                        <span class="spec-meta-val" id="spec-active-model">MobileNetV3</span>
+                    </div>
+                    <div class="spec-meta-item">
+                        <span class="spec-meta-title">Input Dimensions</span>
+                        <span class="spec-meta-val">224 × 224 × 3 RGB</span>
+                    </div>
+                    <div class="spec-meta-item">
+                        <span class="spec-meta-title">Output Categories</span>
+                        <span class="spec-meta-val">7 Classes</span>
+                    </div>
+                    <div class="spec-meta-item">
+                        <span class="spec-meta-title">Confidence Guardrail</span>
+                        <span class="spec-meta-val">≥ 80% Accept / &lt; 50% Audit</span>
+                    </div>
+                </div>
+
+                <div class="comparison-table-wrap">
+                    <h3>Model Architecture Comparison (From model_comparison.csv)</h3>
+                    <table class="history-table comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Accuracy</th>
+                                <th>Precision</th>
+                                <th>Recall</th>
+                                <th>F1 Score</th>
+                                <th>Parameters</th>
+                                <th>Size (MB)</th>
+                                <th>Inference Latency</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparison-tbody">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p>AI-Powered Circular Economy and Sustainable Consumption System • Production-Grade Academic Architecture</p>
+            <p class="footer-sub">PyTorch • Transfer Learning • Grad-CAM • FastAPI • SQLite • Vanilla Web Components</p>
+        </div>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

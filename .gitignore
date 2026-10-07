@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+
+# PyTorch checkpoints and large files
+*.pt
+*.pth
+models/checkpoints/*.pt
+models/checkpoints/*.pth
+
+# SQLite databases
+*.db
+*.sqlite3
+database/*.db
+
+# Datasets (large files should be kept locally or linked)
+dataset/train/*/*
+dataset/validation/*/*
+dataset/test/*/*
+!dataset/**/.gitkeep
+
+# Logs and test outputs
+*.log
+.pytest_cache/
+evaluation/test_results/
+evaluation/failure_cases/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Runtime uploads
+uploads/*
+!uploads/.gitkeep
